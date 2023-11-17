@@ -135,3 +135,5 @@ dmypy.json
 # Ignore private data
 storage/
 
+#ignore everything
+*.csv
