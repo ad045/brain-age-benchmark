@@ -133,7 +133,7 @@ dmypy.json
 .DS_Store
 
 # Ignore private data
-storage/
+storage/TUAB
 
 #ignore everything
 *.csv
