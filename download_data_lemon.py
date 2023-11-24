@@ -23,8 +23,8 @@ for (initial_ID, INDI_ID) in zip(matching_df.Initial_ID, matching_df.INDI_ID): #
 
 # end
 #%%
-
-data_path = pathlib.Path("storage/store3/data/LEMON_RAW")                      # ad: removed /, since that would need higher permission
+#data_path = pathlib.Path("storage/store3/data/LEMON_RAW")                      # ad: removed /, since that would need higher permission
+data_path = pathlib.Path("raw_LEMON/data")                      
 
 if not data_path.exists():
     os.makedirs(data_path)
@@ -57,3 +57,5 @@ for sub in subjects:
 
 good_subs_df = pd.DataFrame(dict(subject=list(set(good_subjects))))
 good_subs_df.to_csv('good_subjects.csv')
+
+lemon_info.to_csv("META_File_IDs_LEMON_new.csv")                # ad
