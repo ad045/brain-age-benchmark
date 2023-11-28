@@ -1,3 +1,5 @@
+#%%
+
 """Convert TUH Abnormal Dataset to the BIDS format.
 
 See "The Temple University Hospital EEG Corpus: Electrode Location and Channel
@@ -21,6 +23,8 @@ import numpy as np
 from braindecode.datasets import TUHAbnormal
 from mne_bids import write_raw_bids, print_dir_tree, make_report, BIDSPath
 
+
+# %%
 
 SEX_TO_MNE = {'n/a': 0, 'm': 1, 'f': 2}
 
@@ -150,10 +154,11 @@ def convert_tuab_to_bids(tuh_data_dir, bids_save_dir, healthy_only=True,
     n_jobs : None | int
         Number of jobs for parallelization.
     """
-    concat_ds = TUHAbnormal(tuh_data_dir, recording_ids=None, n_jobs=n_jobs)
+    concat_ds = TUHAbnormal(tuh_data_dir, recording_ids=None, n_jobs=n_jobs, target_name = "age") #included target_name in the hope to overwrite the pathological stuff
 
-    if healthy_only:
-        concat_ds = concat_ds.split(by='pathological')['False']
+    # if healthy_only:
+    #     concat_ds = concat_ds.split(by='pathological')['False']
+        
     description = concat_ds.description  # Make a copy because `description` is
     # made on-the-fly
     if concat_split_files:
@@ -174,22 +179,25 @@ def convert_tuab_to_bids(tuh_data_dir, bids_save_dir, healthy_only=True,
         _convert_tuh_recording_to_bids(
             ds, bids_save_dir, desc=desc)
 
+#%%
 
 if __name__ == '__main__':
 
     parser = argparse.ArgumentParser(description='Convert TUH to BIDS.')
     parser.add_argument(
         '--tuab_data_dir', type=str,
-        default='/storage/store/data/tuh_eeg/www.isip.piconepress.com/projects/tuh_eeg/downloads/tuh_eeg_abnormal/v2.0.0/edf',
+        default= "../raw_data/storage/TUAB", #eval/storage/store5",
+        # default='/storage/store/data/tuh_eeg/www.isip.piconepress.com/projects/tuh_eeg/downloads/tuh_eeg_abnormal/v2.0.0/edf',
         help='Path to the original data.')
     parser.add_argument(
         '--bids_data_dir', type=str,
+        default = "processed_TUAB",
         help='Path to where the converted data should be saved.')
     parser.add_argument(
-        '--healthy_only', type=bool, default=False,
+        '--healthy_only', type=bool, default=True,                     # True, according to paper
         help='Only convert recordings of healthy subjects (default: False)')
     parser.add_argument(
-        '--reset_session_indices', type=bool, default=True,
+        '--reset_session_indices', type=bool, default=True,            # ad: A simplification done by the authors of the paper
         help='Reset session indices (default: True)')
     parser.add_argument(
         '--n_jobs', type=int, default=1,
