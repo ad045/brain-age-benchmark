@@ -18,15 +18,7 @@ lemon_info = pd.read_csv(
 lemon_info = lemon_info.set_index("ID")
 eeg_subjects = pd.read_csv('lemon_eeg_subjects.csv')
 
-# #%% start: added by ad                                                         # ad
-# matching_df = pd.read_csv("name_match_LEMON.csv")                              
 
-# eeg_subjects["ID"] = None                                                        # ad
-
-# for (initial_ID, INDI_ID) in zip(matching_df.Initial_ID, matching_df.INDI_ID): # ad
-#     eeg_subjects.loc[eeg_subjects["subject"] == initial_ID,"ID"] =       # ad
-
-# # end
 
 # %%
 
@@ -71,8 +63,8 @@ def convert_lemon_to_bids(lemon_data_dir, bids_save_dir, n_jobs=1, DEBUG=False):
         'processed_LEMON/bids_conv_erros.csv')
     # update the participants file as LEMON has no official age data
     participants = pd.read_csv(
-        "Participants_LEMON.csv", sep='\t')
-    participants = participants.set_index("participant_id")
+        "Participants_LEMON.csv", sep=',')
+    participants = participants.set_index("ID")
     participants.loc[subjects_, 'age'] = lemon_info.loc[subjects_, 'age_guess']
     participants.to_csv(
         "processed_LEMON/data/participants.csv", sep='\t')
@@ -121,11 +113,11 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Convert LEMON to BIDS.')
     parser.add_argument(
         '--lemon_data_dir', type=str,
-        default='RAW_LEMON/data',
+        default='raw_LEMON/data',
         help='Path to the original data.')
     parser.add_argument(
         '--bids_data_dir', type=str,
-        default=pathlib.Path("RAW_LEMON/data"),
+        default=pathlib.Path("processed_LEMON/data"),
         help='Path to where the converted data should be saved.')
     parser.add_argument(
         '--n_jobs', type=int, default=1,
