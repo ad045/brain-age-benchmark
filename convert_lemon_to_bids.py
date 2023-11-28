@@ -1,3 +1,4 @@
+# %%
 import argparse
 import os
 import pathlib
@@ -7,19 +8,39 @@ import numpy as np
 import pandas as pd
 from joblib import Parallel, delayed
 import mne
-from mne.io.brainvision.brainvision import _aux_vhdr_info
+# from mne.io.brainvision.brainvision import _aux_vhdr_info
 
 from mne_bids import write_raw_bids, print_dir_tree, make_report, BIDSPath
 
 lemon_info = pd.read_csv(
-    "./META_File_IDs_Age_Gender_Education_Drug_Smoke_SKID_LEMON.csv")
+    "META_File_IDs_LEMON_new.csv")
+    # "./META_File_IDs_Age_Gender_Education_Drug_Smoke_SKID_LEMON.csv")
 lemon_info = lemon_info.set_index("ID")
-eeg_subjects = pd.read_csv('./lemon_eeg_subjects.csv')
+eeg_subjects = pd.read_csv('lemon_eeg_subjects.csv')
+
+# #%% start: added by ad                                                         # ad
+# matching_df = pd.read_csv("name_match_LEMON.csv")                              
+
+# eeg_subjects["ID"] = None                                                        # ad
+
+# for (initial_ID, INDI_ID) in zip(matching_df.Initial_ID, matching_df.INDI_ID): # ad
+#     eeg_subjects.loc[eeg_subjects["subject"] == initial_ID,"ID"] =       # ad
+
+# # end
+
+# %%
+
 lemon_info = lemon_info.loc[eeg_subjects.subject]
 lemon_info['gender'] = lemon_info['Gender_ 1=female_2=male'].map({1: 2, 2: 1})
+
+
+
+# %%
 lemon_info['age_guess'] = np.array(
-  lemon_info['Age'].str.split('-').tolist(), dtype=np.int).mean(1)
+  lemon_info['Age'].str.split('-').tolist(), dtype=int).mean(1) #ad: changed np.int to int.
 subjects = list(lemon_info.index)
+
+#%%
 
 def convert_lemon_to_bids(lemon_data_dir, bids_save_dir, n_jobs=1, DEBUG=False):
     """Convert TUAB dataset to BIDS format.
@@ -47,14 +68,14 @@ def convert_lemon_to_bids(lemon_data_dir, bids_save_dir, n_jobs=1, DEBUG=False):
     bad_subjects = pd.DataFrame(
         dict(subjects= bad_subjects, error=errs))
     bad_subjects.to_csv(
-        '/storage/store3/data/LEMON_EEG_BIDS/bids_conv_erros.csv')
+        'processed_LEMON/bids_conv_erros.csv')
     # update the participants file as LEMON has no official age data
     participants = pd.read_csv(
-        "/storage/store3/data/LEMON_EEG_BIDS/participants.tsv", sep='\t')
+        "Participants_LEMON.csv", sep='\t')
     participants = participants.set_index("participant_id")
     participants.loc[subjects_, 'age'] = lemon_info.loc[subjects_, 'age_guess']
     participants.to_csv(
-        "/storage/store3/data/LEMON_EEG_BIDS/participants.tsv", sep='\t')
+        "processed_LEMON/data/participants.csv", sep='\t')
 
 
 def _convert_subject(subject, data_path, bids_save_dir):
@@ -100,11 +121,11 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Convert LEMON to BIDS.')
     parser.add_argument(
         '--lemon_data_dir', type=str,
-        default='/storage/store3/data/LEMON_RAW',
+        default='RAW_LEMON/data',
         help='Path to the original data.')
     parser.add_argument(
         '--bids_data_dir', type=str,
-        default=pathlib.Path("/storage/store3/data/LEMON_EEG_BIDS"),
+        default=pathlib.Path("RAW_LEMON/data"),
         help='Path to where the converted data should be saved.')
     parser.add_argument(
         '--n_jobs', type=int, default=1,
