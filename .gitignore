@@ -135,7 +135,10 @@ dmypy.json
 # Ignore private data
 storage/TUAB
 raw_LEMON/
-
+processed_CHBP/
+processed_LEMON/
+processed_CamCAN/
+working_raw_data_CamCAN/
 
 #ignore everything
 *.csv

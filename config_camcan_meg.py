@@ -2,13 +2,19 @@ import pathlib
 
 study_name = "age-prediction-benchmark"
 
+# copied "raw_data/CamCAN/storage/raw_data/cc700/meg/pipeline/release005/BIDSsep/derivatives_rest/aa/AA_movecomp/aamod_meg_maxfilt_00002" to "working_raw_data_CamCAN/aa/AA_movecomp..."
 bids_root = pathlib.Path(
-    '/storage/store/data/camcan/BIDSsep/rest')
+    "/u/home/dena/Documents/clean_brain_age/raw_data/CamCAN/storage/raw_data/cc700/meg/pipeline/release005/BIDSsep/rest")
+    # '/storage/store/data/camcan/BIDSsep/rest')
 
-deriv_root = pathlib.Path('/storage/store3/derivatives/camcan-bids/derivatives')
+# assumption: deriv_root and subjects_dir are only for outputs, and not for inputs. 
+deriv_root = pathlib.Path('/u/home/dena/Documents/clean_brain_age/brain-age-benchmark/processed_CamCAN/derivatives')
+# deriv_root = pathlib.Path('/storage/store3/derivatives/camcan-bids/derivatives') #orig
+# deriv_root = pathlib.Path('working_raw_data_CamCAN/aa/AA_movecomp/aamod_meg_maxfilt_00002')
+# /u/home/dena/Documents/clean_brain_age/brain-age-benchmark/working_raw_data_CamCAN/aa/AA_movecomp/aamod_meg_maxfilt_00002/sub-CC110045
 
-subjects_dir = pathlib.Path('/storage/store/data/camcan-mne/freesurfer')
-
+subjects_dir = pathlib.Path('/u/home/dena/Documents/clean_brain_age/brain-age-benchmark/processed_CamCAN/freesurfer')
+# subjects_dir = pathlib.Path('/storage/store/data/camcan-mne/freesurfer')
 # ad: random note: participants.tsv in /u/home/dena/Documents/clean_brain_age/raw_data/CamCAN/storage/raw_data/cc700/mri/pipeline/release004/BIDS_20190411/fmap_smt/participants.tsv
 source_info_path_update = {'processing': 'autoreject',
                            'suffix': 'epo'}
@@ -72,6 +78,7 @@ rest_epochs_overlap = 0.
 rest_epochs_duration = 10.
 baseline = None
 
+# Maxfilter. 
 mf_cal_fname = '/storage/store/data/camcan-mne/Cam-CAN_sss_cal.dat'
 mf_ctc_fname = '/storage/store/data/camcan-mne/Cam-CAN_ct_sparse.fif'
 

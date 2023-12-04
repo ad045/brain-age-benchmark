@@ -98,8 +98,7 @@ def convert_lemon_to_bids(lemon_data_dir, bids_save_dir, n_jobs=1, DEBUG=False):
         Number of jobs for parallelization.
     """
     subjects_ = subjects
-    print(subjects)
-    print(subjects_)
+
     if DEBUG:
         subjects_ = subjects[:1]
 
@@ -110,13 +109,16 @@ def convert_lemon_to_bids(lemon_data_dir, bids_save_dir, n_jobs=1, DEBUG=False):
     # ad: I don't see how this could be a tuple and not just a string. 
     subjects_ = [sub for sub in good_subjects if not isinstance(sub, tuple)]
 
-    _, bad_subjects, errs = zip(*[
-        sub for sub in good_subjects if isinstance(sub, tuple)])
+
+    # ad: Exclude data which is not useful for us: Bad subjects only are bad due to following missing data:
+    # “Comment/no USB Connection to actiCAP, New Segment/, Stimulus/S 1, Stimulus/S200, Stimulus/S210” 
+    # _, bad_subjects, errs = zip(*[
+    #     sub for sub in good_subjects if isinstance(sub, tuple)])
     
-    bad_subjects = pd.DataFrame(
-        dict(subjects= bad_subjects, error=errs))
-    bad_subjects.to_csv(
-        'processed_LEMON/bids_conv_erros.csv')
+    # bad_subjects = pd.DataFrame(dict(subjects= bad_subjects, error=errs))
+    # bad_subjects.to_csv(
+    #     'processed_LEMON/bids_conv_erros.csv')
+
     # update the participants file as LEMON has no official age data
     participants = pd.read_csv(
         "Participants_LEMON.csv", sep=',')
@@ -180,7 +182,7 @@ if __name__ == '__main__':
         '--n_jobs', type=int, default=1,
         help='number of parallel processes to use (default: 1)')
     parser.add_argument(
-        '--DEBUG', type=bool, default=True,
+        '--DEBUG', type=bool, default=False,
         help='activate debugging mode')
     args = parser.parse_args()
 
@@ -190,3 +192,5 @@ if __name__ == '__main__':
 
     print_dir_tree(args.bids_data_dir)
     print(make_report(args.bids_data_dir))
+
+# %%
