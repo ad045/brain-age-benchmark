@@ -4,7 +4,7 @@ import pandas as pd
 dfs = list()
 for dataset in ['chbp', 'lemon', 'tuab', 'camcan']:
     config_map = {'chbp': "config_chbp_eeg",
-                  'lemon': "config_lemon_eeg",
+                  'lemon': "config_lemon_eeg",  # correct bids_root path. 
                   'tuab': "config_tuab",
                   'camcan': "config_camcan_meg"}
     if dataset not in config_map:

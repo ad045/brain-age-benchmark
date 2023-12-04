@@ -21,11 +21,13 @@ eeg_template_montage.rename_channels(
 channels = list()
 for sub in subjects:
     fname = deriv_root / sub / 'eeg' / f'{sub}_task-protmap_epo.fif'
+    print(fname)
     count = None
     if fname.exists():
         info = mne.io.read_info(fname)
         count = len(info['ch_names'])
+        print(count)
     channels.append(count)
-
+# %%
 ch_counts = pd.DataFrame({"count": channels, "subject": subjects})
 ch_counts.to_csv('outputs/channel_counts.csv')                  # ad: removed "./" in beginning

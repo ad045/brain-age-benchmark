@@ -5,7 +5,9 @@ study_name = "age-prediction-benchmark"
 
 # On drago
 N_JOBS = 80
-bids_root = Path("/storage/store3/data/LEMON_EEG_BIDS")
+# bids_root = Path("/storage/store3/data/LEMON_EEG_BIDS")
+# /u/home/dena/Documents/clean_brain_age/brain-age-benchmark/raw_LEMON/data/participants.tsv
+bids_root = Path("raw_LEMON/data") # ad, correct as of December 4th
 # deriv_root = Path("/storage/store3/derivatives/LEMON_EEG_BIDS/")
 deriv_root = Path("/storage/store3/derivatives/LEMON_EEG_BIDS_2/")
 subjects_dir = Path('/storage/store/data/camcan-mne/freesurfer')

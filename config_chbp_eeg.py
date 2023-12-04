@@ -3,8 +3,10 @@ import mne
 
 study_name = "age-prediction-benchmark"
 
-bids_root = pathlib.Path(
-    "/storage/store3/data/CHBMP_EEG_and_MRI/ds_bids_chbmp")
+# bids_root = pathlib.Path(
+#     "/storage/store3/data/CHBMP_EEG_and_MRI/ds_bids_chbmp")
+bids_root = pathlib.Path("processed_CHBM")
+# /u/home/dena/Documents/clean_brain_age/brain-age-benchmark/processed_CHBM/participants.csv
 
 deriv_root = pathlib.Path("/storage/store3/derivatives/CHBMP_EEG_and_MRI/")
 # "/storage/store2/derivatives/eeg-pred-modeling-summer-school/")

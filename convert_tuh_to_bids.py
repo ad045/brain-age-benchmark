@@ -132,7 +132,7 @@ def _convert_tuh_recording_to_bids(ds, bids_save_dir, desc=None):
 
 
 def convert_tuab_to_bids(tuh_data_dir, bids_save_dir, healthy_only=True,
-                         reset_session_indices=True, concat_split_files=True,
+                         reset_session_indices=True, concat_split_files=False, # concat split files cd rawas originally true 
                          n_jobs=1):
     """Convert TUAB dataset to BIDS format.
 

@@ -3,10 +3,30 @@ from pyedflib import highlevel
 import pyedflib as plib
 import numpy as np
 import matplotlib.pyplot as plt
+import os
 
 
-# %% Get data 
-path = "storage/store3/data/CHBMP_EEG_AND_MRI/ds_bids_chbmp/sub-CBM00002/eeg/sub-CBM00002_task-protmap_eeg.edf"
+
+# code for automatically scanning extracting data from edf headers (or search the web)
+# 1) get list of all path filenames 
+# from typing import List
+# path_dir: str = r"C:\Users\sselt\Documents\blog_demo"
+# content_dir: List[str] = os.listdir(path_dir)
+
+# %% Parameters 
+dataset = "LEMON" # "CHBP", "TUAB", "CamCAN"  
+
+# %% Get path 
+
+path = None
+
+if dataset == "LEMON": 
+    path = ""
+elif dataset == "CHBP":
+    path = "storage/store3/data/CHBMP_EEG_AND_MRI/ds_bids_chbmp/sub-CBM00002/eeg/sub-CBM00002_task-protmap_eeg.edf"
+
+
+
 signals, signal_headers, header = highlevel.read_edf(path)
 
 # %%

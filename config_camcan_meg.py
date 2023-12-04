@@ -9,6 +9,7 @@ deriv_root = pathlib.Path('/storage/store3/derivatives/camcan-bids/derivatives')
 
 subjects_dir = pathlib.Path('/storage/store/data/camcan-mne/freesurfer')
 
+# ad: random note: participants.tsv in /u/home/dena/Documents/clean_brain_age/raw_data/CamCAN/storage/raw_data/cc700/mri/pipeline/release004/BIDS_20190411/fmap_smt/participants.tsv
 source_info_path_update = {'processing': 'autoreject',
                            'suffix': 'epo'}
 
