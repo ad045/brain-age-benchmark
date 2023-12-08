@@ -24,15 +24,20 @@ if dataset == "LEMON":
     path = ""
 elif dataset == "CHBP":
     path = "storage/store3/data/CHBMP_EEG_AND_MRI/ds_bids_chbmp/sub-CBM00002/eeg/sub-CBM00002_task-protmap_eeg.edf"
+    # path = "storage/store3/data/CHBMP_EEG_AND_MRI/ds_bids_chbmp/sub-CBM00042/eeg/sub-CBM00042_task-protmap_eeg.edf"
+elif dataset == "CamCAN": 
+    path = ""
+elif dataset == "TUAB": 
+    path = "../raw_data/storage/TUAB/eval/storage/store5/aaaaapxm_s001_t001.edf"
+    # path = "/u/home/dena/Documents/brain-age-benchmark/storage/store/data/tuh_eeg/www.isip.piconepress.com/projects/tuh_eeg/downloads/tuh_eeg_abnormal/v2.0.0/edf/eval/normal/01_tcp_ar/aaaaaoav_s002_t000.edf"
+else: 
+    print("The dataset '{dataset}' does not exist.")
 
 
 
 signals, signal_headers, header = highlevel.read_edf(path)
 
 # %%
-# path = "storage/store3/data/CHBMP_EEG_AND_MRI/ds_bids_chbmp/sub-CBM00042/eeg/sub-CBM00042_task-protmap_eeg.edf"
-# path = "/u/home/dena/Documents/brain-age-benchmark/storage/store/data/tuh_eeg/www.isip.piconepress.com/projects/tuh_eeg/downloads/tuh_eeg_abnormal/v2.0.0/edf/eval/normal/01_tcp_ar/aaaaaoav_s002_t000.edf"
-path = "../raw_data/storage/TUAB/eval/storage/store5/aaaaapxm_s001_t001.edf"
 signals, signal_headers, header = highlevel.read_edf(path)
 
 # %% Plot data

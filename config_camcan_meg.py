@@ -4,16 +4,16 @@ study_name = "age-prediction-benchmark"
 
 # copied "raw_data/CamCAN/storage/raw_data/cc700/meg/pipeline/release005/BIDSsep/derivatives_rest/aa/AA_movecomp/aamod_meg_maxfilt_00002" to "working_raw_data_CamCAN/aa/AA_movecomp..."
 bids_root = pathlib.Path(
-    "/u/home/dena/Documents/clean_brain_age/raw_data/CamCAN/storage/raw_data/cc700/meg/pipeline/release005/BIDSsep/rest")
+    "/vol/aimspace/users/dena/Documents/clean_brain_age/raw_data/CamCAN/storage/raw_data/cc700/meg/pipeline/release005/BIDSsep/rest")
     # '/storage/store/data/camcan/BIDSsep/rest')
 
 # assumption: deriv_root and subjects_dir are only for outputs, and not for inputs. 
-deriv_root = pathlib.Path('/u/home/dena/Documents/clean_brain_age/brain-age-benchmark/processed_CamCAN/derivatives')
+deriv_root = pathlib.Path('/vol/aimspace/users/dena/Documents/clean_brain_age/brain-age-benchmark/processed_CamCAN/derivatives')
 # deriv_root = pathlib.Path('/storage/store3/derivatives/camcan-bids/derivatives') #orig
 # deriv_root = pathlib.Path('working_raw_data_CamCAN/aa/AA_movecomp/aamod_meg_maxfilt_00002')
 # /u/home/dena/Documents/clean_brain_age/brain-age-benchmark/working_raw_data_CamCAN/aa/AA_movecomp/aamod_meg_maxfilt_00002/sub-CC110045
 
-subjects_dir = pathlib.Path('/u/home/dena/Documents/clean_brain_age/brain-age-benchmark/processed_CamCAN/freesurfer')
+subjects_dir = pathlib.Path('/vol/aimspace/users/dena/Documents/clean_brain_age/brain-age-benchmark/processed_CamCAN/freesurfer')
 # subjects_dir = pathlib.Path('/storage/store/data/camcan-mne/freesurfer')
 # ad: random note: participants.tsv in /u/home/dena/Documents/clean_brain_age/raw_data/CamCAN/storage/raw_data/cc700/mri/pipeline/release004/BIDS_20190411/fmap_smt/participants.tsv
 source_info_path_update = {'processing': 'autoreject',
@@ -27,6 +27,9 @@ task = 'rest'
 sessions = ['rest']  # keep empty for code flow
 data_type = 'meg'
 ch_types = ['meg']
+
+conditions = ["rest"]
+
 
 analyze_channels = [
     'MEG0111', 'MEG0121', 'MEG0131', 'MEG0141', 'MEG0211',
@@ -58,15 +61,18 @@ eog_channels = []
 
 find_breaks = False
 
-n_proj_eog = 1
+# n_proj_eog = 1                    # ad
 
 reject = None
 
 on_rename_missing_events = "warn"
 
-N_JOBS = 30
+# N_JOBS = 40 # ad: previously 30 
+n_jobs = 40
 
-decim = 5  # Cam-CAN has 1000 Hz; Cuban Human Brain Project 200Hz
+# decim = 5  # Cam-CAN has 1000 Hz; Cuban Human Brain Project 200Hz
+epochs_decim = 5  # decimate by 4, i.e., divide sampling frequency by 4
+
 
 mf_st_duration = 10.
 
@@ -107,3 +113,6 @@ on_error = "continue"
 
 N_JOBS = 40
 subjects = ['CC110033']
+
+
+print("done config camcan file")
