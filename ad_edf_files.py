@@ -4,7 +4,8 @@ import pyedflib as plib
 import numpy as np
 import matplotlib.pyplot as plt
 import os
-
+import seaborn as sns
+import pandas as pd
 
 
 # code for automatically scanning extracting data from edf headers (or search the web)
@@ -14,7 +15,7 @@ import os
 # content_dir: List[str] = os.listdir(path_dir)
 
 # %% Parameters 
-dataset = "LEMON" # "CHBP", "TUAB", "CamCAN"  
+dataset = "TUAB" # "LEMON", "CHBP", "TUAB", "CamCAN"  
 
 # %% Get path 
 
@@ -28,7 +29,8 @@ elif dataset == "CHBP":
 elif dataset == "CamCAN": 
     path = ""
 elif dataset == "TUAB": 
-    path = "../raw_data/storage/TUAB/eval/storage/store5/aaaaapxm_s001_t001.edf"
+    path = "/vol/aimspace/users/dena/Documents/clean_brain_age/raw_data/storage/TUAB/eval/normal/01_tcp_ar/aaaaadjk_s002_t000.edf"
+    # path = "../raw_data/storage/TUAB/eval/storage/store5/aaaaapxm_s001_t001.edf"
     # path = "/u/home/dena/Documents/brain-age-benchmark/storage/store/data/tuh_eeg/www.isip.piconepress.com/projects/tuh_eeg/downloads/tuh_eeg_abnormal/v2.0.0/edf/eval/normal/01_tcp_ar/aaaaaoav_s002_t000.edf"
 else: 
     print("The dataset '{dataset}' does not exist.")
@@ -47,6 +49,52 @@ ax = plt.axes()
 for i in np.arange(n):
     ax.plot(signals[i] , color='purple' )
     plt.show()
+
+
+# %% Plot gray data! 
+
+n = len(signals)
+fig = plt.figure(figsize=(150,50))
+ax = plt.axes()
+for i in np.arange(n):
+    ax.plot(signals[i] , color='gray', alpha=0.2)
+
+plt.plot(signals[5], color="purple")
+plt.show()
+
+
+
+# %%
+sns.set_context("notebook")
+# plot zoomed-in data
+fig = plt.figure(figsize=(150,50))
+ax = plt.axes()
+limit = 100
+plt.ylim([-limit, limit])
+for i in np.arange(n):
+    ax.plot(signals[i] , color='purple' )
+    plt.show()
+
+# Assuming 'signals' is a DataFrame with n columns
+n = 5  # Replace this with the actual number of columns in your DataFrame
+signals = pd.DataFrame(np.random.randn(100, n), columns=[f'Signal_{i}' for i in range(n)])
+
+# Set the limit for the y-axis
+limit = 100
+
+# Create a figure and axis
+fig, axes = plt.subplots(n, 1, figsize=(10, 5 * n), sharex=True, gridspec_kw={'hspace': 0.5})
+
+# Plot zoomed-in data for each column
+for i, column in enumerate(signals.columns):
+    ax = axes[i]
+    sns.lineplot(data=signals[[column]], ax=ax, color='purple')
+    ax.set_ylim([-limit, limit])
+    ax.set_ylabel(column)
+
+# Display the plot
+plt.show()
+
 
 #%% Show header, with removed sensitive data 
 header

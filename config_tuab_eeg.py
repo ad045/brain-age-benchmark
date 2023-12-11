@@ -5,11 +5,13 @@ import mne
 study_name = "age-prediction-benchmark"
 
 # On drago
-N_JOBS = 80
-bids_root = Path("/storage/store2/data/TUAB-healthy-bids-bv")
+# N_JOBS = 80                   # ad
+n_jobs = 1 #40                     # ad
+
+bids_root = Path("../raw_data/TUAB/eval/normal/01_tcp_ar")
 #deriv_root = Path("/storage/store3/derivatives/TUAB-healthy-bids2")
-deriv_root = Path("/storage/store3/derivatives/TUAB-healthy-bids3")
-subjects_dir = Path('/storage/store/data/camcan-mne/freesurfer')
+deriv_root = Path("processed_TUAB")
+subjects_dir = None #Path('/storage/store/data/camcan-mne/freesurfer')
 
 source_info_path_update = {'processing': 'autoreject',
                            'suffix': 'epo'}
@@ -23,7 +25,7 @@ inverse_targets = []
 noise_cov = 'ad-hoc'
 eeg_reference = []  # Tuab has a custom reference
 
-# subjects = ['00002355']
+subjects = ['00002355']
 
 task = "rest"
 # task = "normal"
@@ -60,7 +62,7 @@ rest_epochs_overlap = 0.
 baseline = None
 
 run_source_estimation = True
-use_template_mri = True
+use_template_mri = "fsaverage_small" #True    #ad
 
 event_repeated = "drop"
 l_trans_bandwidth = "auto"
@@ -79,3 +81,4 @@ on_error = 'continue'
 
 # on_error = 'abort'
 # on_error = 'debug'
+

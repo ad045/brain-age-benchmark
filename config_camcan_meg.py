@@ -1,4 +1,6 @@
 import pathlib
+# turn up number of jobs again!! Reduced it for testing from 40 to 1. 
+
 
 study_name = "age-prediction-benchmark"
 
@@ -13,22 +15,35 @@ deriv_root = pathlib.Path('/vol/aimspace/users/dena/Documents/clean_brain_age/br
 # deriv_root = pathlib.Path('working_raw_data_CamCAN/aa/AA_movecomp/aamod_meg_maxfilt_00002')
 # /u/home/dena/Documents/clean_brain_age/brain-age-benchmark/working_raw_data_CamCAN/aa/AA_movecomp/aamod_meg_maxfilt_00002/sub-CC110045
 
-subjects_dir = pathlib.Path('/vol/aimspace/users/dena/Documents/clean_brain_age/brain-age-benchmark/processed_CamCAN/freesurfer')
+
+subjects_dir = None # pathlib.Path('/vol/aimspace/users/dena/Documents/clean_brain_age/brain-age-benchmark/processed_CamCAN/freesurfer')
 # subjects_dir = pathlib.Path('/storage/store/data/camcan-mne/freesurfer')
 # ad: random note: participants.tsv in /u/home/dena/Documents/clean_brain_age/raw_data/CamCAN/storage/raw_data/cc700/mri/pipeline/release004/BIDS_20190411/fmap_smt/participants.tsv
+
+interactive = True
 source_info_path_update = {'processing': 'autoreject',
                            'suffix': 'epo'}
 
 inverse_targets = []
 
+# Skipping things: 
+process_empty_room = False  # skip init/_02_find_empty_room.py # ad!
+
+
+#get_mf_reference_run = "see below"
+# age/raw_data/CamCAN/storage/raw_data/cc700/meg/pipeline/release004/BIDS_20190411/meg_emptyroom/sub-CC110101/emptyroom/emptyroom_CC110101.fif
+
 noise_cov = 'ad-hoc'
 
-task = 'rest'
-sessions = ['rest']  # keep empty for code flow
+# task = 'rest'
+# noch nicht getestet: 
+task_is_rest = True
+
+# sessions = ['rest']  # keep empty for code flow
 data_type = 'meg'
 ch_types = ['meg']
 
-conditions = ["rest"]
+# conditions = ["rest"]
 
 
 analyze_channels = [
@@ -68,7 +83,7 @@ reject = None
 on_rename_missing_events = "warn"
 
 # N_JOBS = 40 # ad: previously 30 
-n_jobs = 40
+n_jobs = 1 #40
 
 # decim = 5  # Cam-CAN has 1000 Hz; Cuban Human Brain Project 200Hz
 epochs_decim = 5  # decimate by 4, i.e., divide sampling frequency by 4
@@ -84,13 +99,18 @@ rest_epochs_overlap = 0.
 rest_epochs_duration = 10.
 baseline = None
 
+use_maxwell_filter = True          # trying what happens
+
 # Maxfilter. 
+# mf_ctc_fname = "/vol/aimspace/users/dena/Documents/clean_brain_age/raw_data/CamCAN/storage/raw_data/cc700/meg/pipeline/release005/BIDSsep/derivatives_rest/aa/AA_movecomp/aamod_meg_maxfilt_00002/sub-CC110101/mf2pt2_sub-CC110101_ses-rest_task-rest_meg.fif"
+# mf_cal_fname = "/vol/aimspace/users/dena/Documents/clean_brain_age/raw_data/CamCAN/storage/raw_data/cc700/meg/pipeline/release005/BIDSsep/derivatives_rest/aa/AA_movecomp/aamod_meg_maxfilt_00002/sub-CC110101/mf2pt2_sub-CC110101_ses-rest_task-rest_meg.log"
+
 mf_cal_fname = '/storage/store/data/camcan-mne/Cam-CAN_sss_cal.dat'
 mf_ctc_fname = '/storage/store/data/camcan-mne/Cam-CAN_ct_sparse.fif'
 
-find_flat_channels_meg = True
-find_noisy_channels_meg = True
-use_maxwell_filter = True
+find_flat_channels_meg = False # ad (we are missing the ctc and cal files, which are necessary)
+find_noisy_channels_meg = False # ad (we are missing the ctc and cal files, which are necessary)
+# use_maxwell_filter = True
 run_source_estimation = True
 use_template_mri = "fsaverage_small"
 adjust_coreg = True
@@ -111,8 +131,8 @@ mne_log_level = "error"
 # on_error = 'continue'
 on_error = "continue"
 
-N_JOBS = 40
-subjects = ['CC110033']
+# N_JOBS = 40
+subjects = ['CC110101']
 
 
 print("done config camcan file")

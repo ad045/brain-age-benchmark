@@ -147,3 +147,8 @@ working_raw_data_CamCAN/
 *.json
 *.vhdr
 *.vmrk
+*.gz
+*.lock
+*.pkl
+*.fif
+*.svg

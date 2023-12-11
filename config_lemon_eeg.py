@@ -4,16 +4,26 @@ import mne
 study_name = "age-prediction-benchmark"
 
 # On drago
-N_JOBS = 80
+# N_JOBS = 40
+n_jobs = 1 #40       # ad: new version
+
 # bids_root = Path("/storage/store3/data/LEMON_EEG_BIDS")
 # /u/home/dena/Documents/clean_brain_age/brain-age-benchmark/raw_LEMON/data/participants.tsv
-bids_root = Path("raw_LEMON/data") # ad, correct as of December 4th
+bids_root = Path("/vol/aimspace/users/dena/Documents/clean_brain_age/brain-age-benchmark/bids_LEMON/data") # ad
 # deriv_root = Path("/storage/store3/derivatives/LEMON_EEG_BIDS/")
-deriv_root = Path("/storage/store3/derivatives/LEMON_EEG_BIDS_2/")
-subjects_dir = Path('/storage/store/data/camcan-mne/freesurfer')
+deriv_root = Path("/vol/aimspace/users/dena/Documents/clean_brain_age/brain-age-benchmark/processed_LEMON/data") # ad
+#maybe change that?  None
+subjects_dir = None #Path("/vol/aimspace/users/dena/Documents/clean_brain_age/brain-age-benchmark/processed_LEMON/freesurfer") # ad
+              # '/storage/store/data/camcan-mne/freesurfer')
 
 source_info_path_update = {'processing': 'autoreject',
                            'suffix': 'epo'}
+
+
+# process_empty_room is always skipped, since EEG not EMG data 
+
+# task_is_rest = True ad
+
 
 inverse_targets = []
 
@@ -37,8 +47,11 @@ eeg_template_montage = mne.channels.make_standard_montage("standard_1005")
 
 l_freq = 0.1
 h_freq = 49
-resample_sfreq = 200
+raw_resample_sfreq = 200 # ad, 
+# resample_sfreq = 200 # previously 
+
 # decim = 5 # LEMON has 1000 Hz; Cuban Human Brain Project 200Hz
+# had the hashtag also previously 
 
 eeg_reference = []
 
@@ -46,18 +59,18 @@ eog_channels = ["Fp1"]
 
 find_breaks = False
 
-n_proj_eog = 1
+# n_proj_eog = 1            # ad
 
 reject = None
 
 on_rename_missing_events = "warn"
 
 epochs_tmin = 0
-epochs_tmax = 10 - 1 / resample_sfreq
+epochs_tmax = 10 - 1 / raw_resample_sfreq # ad
 baseline = None
 
 run_source_estimation = True
-use_template_mri = True
+use_template_mri = "fsaverage_small" #True
 
 conditions = ["eyes/open", "eyes/closed"]
 

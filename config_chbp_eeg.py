@@ -5,13 +5,15 @@ study_name = "age-prediction-benchmark"
 
 # bids_root = pathlib.Path(
 #     "/storage/store3/data/CHBMP_EEG_and_MRI/ds_bids_chbmp")
-bids_root = pathlib.Path("processed_CHBM")
+bids_root = pathlib.Path("/u/home/dena/Documents/clean_brain_age/raw_data/CHBP") #processed_CHBM")
 # /u/home/dena/Documents/clean_brain_age/brain-age-benchmark/processed_CHBM/participants.csv
 
-deriv_root = pathlib.Path("/storage/store3/derivatives/CHBMP_EEG_and_MRI/")
+deriv_root = pathlib.Path("/u/home/dena/Documents/clean_brain_age/brain-age-benchmark/processed_CHBP") 
+                          #storage/store3/derivatives/CHBMP_EEG_and_MRI/")
 # "/storage/store2/derivatives/eeg-pred-modeling-summer-school/")
 
-subjects_dir = pathlib.Path('/storage/store/data/camcan-mne/freesurfer')
+subjects_dir = pathlib.Path("/u/home/dena/Documents/clean_brain_age/brain-age-benchmark/processed_CHBP") 
+                    # '/storage/store/data/camcan-mne/freesurfer')
 
 source_info_path_update = {'processing': 'autoreject',
                            'suffix': 'epo'}
@@ -44,7 +46,9 @@ eeg_reference = []
 
 find_breaks = False
 
-n_proj_eog = 1
+# n_proj_eog = 1       # ad
+n_proj_eog = dict(n_mag=1, n_grad=1, n_eeg=1) # ad
+
 
 ssp_reject_eog = "autoreject_global"
 
@@ -53,14 +57,15 @@ reject = None
 on_error = "abort"
 on_rename_missing_events = "warn"
 
-N_JOBS = 30
+# N_JOBS = 30               # ad
+n_jobs = 30                 # ad
 
 epochs_tmin = 0
 epochs_tmax = 10
 baseline = None
 
 run_source_estimation = True
-use_template_mri = True
+# use_template_mri = True           # ad
 
 rename_events = {
     "artefacto": "artefact",
