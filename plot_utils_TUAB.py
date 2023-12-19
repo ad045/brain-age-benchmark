@@ -48,12 +48,17 @@ def get_raw_data(dataset, subject, datatype):
     bids_root = BIDS_ROOTS[dataset]
     bids_path = BIDSPath(root=bids_root)
     bids_path.update(subject=subject, datatype=datatype)
-    # try: #if bids_path != '':
-    if bids_path != '': 
+
+    if dataset == "LEMON": # BRAINVISION
         raw = mne.io.read_raw_brainvision(bids_path)
         print(f"Brainvision file at: {bids_path}")
         return bids_path, raw
-
+    
+    elif dataset == "CHBP": # EDF
+        raw = mne.io.read_raw_edf(bids_path)
+        print(f"EDF file at: {bids_path}")
+        return bids_path, raw
+    
     # except Exception as e:
     #     # return False
     #     pass
@@ -67,6 +72,7 @@ def get_raw_data(dataset, subject, datatype):
 
 
 def plot_time_plot(dataset, subject, datatype="eeg"): 
+    
     _, raw = get_raw_data(dataset=dataset, subject=subject, datatype=datatype)
     # if raw != None: 
     raw.plot()
@@ -111,9 +117,36 @@ def get_durations_of_measurements(dataset, datatype):
 def plot_histogram_durations(dataset, datatype="eeg"): 
     # Plot a histogram of recording durations
     # Get durations
-    durations = get_durations_of_measurements(dataset, datatype)
-    # Plot
-    plt.hist(durations, bins=20, color='skyblue', edgecolor='black')
+    if dataset != "TUAB": 
+        durations = get_durations_of_measurements(dataset, datatype)
+        # Plot
+        plt.hist(durations, bins=20, color='skyblue', edgecolor='black')
+        plt.title(f'Histogram Recording Durations, {dataset}')
+        plt.xlabel('Duration (seconds)')
+        plt.ylabel('Number measurements')
+        # Save and show plot
+        plt.savefig(f"saved_pictures/histogram_{dataset}.svg", format='svg')
+        plt.show()
+
+
+def plot_histogram_durations_tuab(csv_location, tuab_only_first_trial=False, duration_shorter_than_x_sec=10800):
+    # default: 10800 seconds >> 3 hours. 
+    dataset = "TUAB"
+    df = pd.read_csv(csv_location)
+    # binwidth = 5
+
+    number_invalid_runs = len(df.loc[df["age"] >= 120]) 
+    print(f"There are {number_invalid_runs} samples that have an unlikely age (age < 120), and thus were removed.")
+    
+    df = df.where(df["age"] <= 120)
+    df = df.where(df["duration-sec"] <= duration_shorter_than_x_sec) 
+    
+    if tuab_only_first_trial == True: 
+        df = df[df['run_id'].str.contains('_s001_t000.', na=False)]        
+        # Non-aesthetic way to include first trial in title
+        dataset = "TUAB, only first trial"
+
+    plt.hist(df["duration-sec"], bins=20, color='skyblue', edgecolor='black')
     plt.title(f'Histogram Recording Durations, {dataset}')
     plt.xlabel('Duration (seconds)')
     plt.ylabel('Number measurements')
@@ -124,7 +157,13 @@ def plot_histogram_durations(dataset, datatype="eeg"):
 
 # %% 
 def plot_demography(dataset, csv_location, tuab_only_first_trial=False):
-    df = pd.read_csv(csv_location)
+    if dataset == "LEMON" or dataset == "TUAB": 
+        df = pd.read_csv(csv_location)
+    elif dataset == "CHBP" or dataset == "CamCAN": 
+        df = pd.read_csv(csv_location, sep="\t")
+        # print(df)
+    else: 
+        print("ERROR: Dataset name not known.")
 
     binwidth = 5
 
@@ -141,7 +180,34 @@ def plot_demography(dataset, csv_location, tuab_only_first_trial=False):
         sns.histplot(data=df[df['Gender_ 1=female_2=male'] == 2], x='Age_mid', kde=True, label='Male', color='blue', binwidth=binwidth)
         sns.histplot(data=df[df['Gender_ 1=female_2=male'] == 1], x='Age_mid', kde=True, label='Female', color='red', binwidth=binwidth)
 
-    if dataset == "TUAB":
+        # Calculate mean and std of the 'age' column
+        mean_age_male = df[df['Gender_ 1=female_2=male'] == 2]['Age_mid'].mean()
+        mean_age_female = df[df['Gender_ 1=female_2=male'] == 1]['Age_mid'].mean()
+        std_age_male = df[df['Gender_ 1=female_2=male'] == 2]['Age_mid'].std()
+        std_age_female = df[df['Gender_ 1=female_2=male'] == 1]['Age_mid'].std()
+        print(f"Mean Age Male: {mean_age_male:.2f}")
+        print(f"Standard Deviation of Age Male: {std_age_male:.2f}")
+        print(f"Mean Age Female: {mean_age_female:.2f}")
+        print(f"Standard Deviation of Age: {std_age_female:.2f}")
+    
+    elif dataset == "CHBP" or dataset == "CamCAN": 
+        # Create a curvy histogram for females and males 
+        sns.histplot(data=df[df['sex'] == "M"], x='age', kde=True, label='Male', color='blue', binwidth=binwidth)
+        sns.histplot(data=df[df['sex'] == "F"], x='age', kde=True, label='Female', color='red', binwidth=binwidth)
+
+        # Calculate mean and std of the 'age' column
+        mean_age_male = df[df['sex'] == "M"]["age"].mean()
+        mean_age_female = df[df['sex'] == "F"]['age'].mean()
+        std_age_male = df[df['sex'] == "M"]["age"].std()
+        std_age_female = df[df['sex'] == "F"]['age'].std()
+        print(f"Mean Age Male: {mean_age_male:.2f}")
+        print(f"Standard Deviation of Age Male: {std_age_male:.2f}")
+        print(f"Mean Age Female: {mean_age_female:.2f}")
+        print(f"Standard Deviation of Age: {std_age_female:.2f}")
+
+        
+    
+    elif dataset == "TUAB":
         number_invalid_runs = len(df.loc[df["age"] >= 120]) 
         print(f"There are {number_invalid_runs} samples that have an unlikely age (age < 120), and thus were removed.")
         
@@ -157,6 +223,15 @@ def plot_demography(dataset, csv_location, tuab_only_first_trial=False):
         sns.histplot(data=df[df['gender'] == "M"], x='age', kde=True, label='Male', color='blue', binwidth=binwidth)
         sns.histplot(data=df[df['gender'] == "F"], x='age', kde=True, label='Female', color='red', binwidth=binwidth)
 
+        mean_age_male = df[df['gender'] == "M"]["age"].mean()
+        mean_age_female = df[df['gender'] == "F"]['age'].mean()
+        std_age_male = df[df['gender'] == "M"]["age"].std()
+        std_age_female = df[df['gender'] == "F"]['age'].std()
+        print(f"Mean Age Male: {mean_age_male:.2f}")
+        print(f"Standard Deviation of Age Male: {std_age_male:.2f}")
+        print(f"Mean Age Female: {mean_age_female:.2f}")
+        print(f"Standard Deviation of Age: {std_age_female:.2f}")
+
     else: 
         print("Dataset-Name is wrong")
 
@@ -170,12 +245,28 @@ def plot_demography(dataset, csv_location, tuab_only_first_trial=False):
     plt.savefig(f"saved_pictures/gender_age_{dataset}.svg", format='svg')
     plt.show()
 
+
+
 # %%
+    
+csv_links = {
+    "LEMON": "Participants_LEMON.csv",
+    "TUAB": "patient_TUAB_id_age.csv", 
+    "CHBP": "/vol/aimspace/users/dena/Documents/clean_brain_age/brain-age-benchmark/processed_CHBP/participants.csv",
+    "CamCAN": "/vol/aimspace/users/dena/Documents/clean_brain_age/raw_data/CamCAN/storage/raw_data/cc700/meg/pipeline/release005/BIDSsep/rest/participants.tsv"
+}
 
-plot_demography("TUAB", "patient_TUAB_id_age.csv", tuab_only_first_trial = True)
+# %% Gives both the histogram AND the mean and std. 
+
+plot_demography("TUAB", csv_links["TUAB"], tuab_only_first_trial = True)
 #%%
-plot_demography("LEMON", "Participants_LEMON.csv")
+plot_demography("LEMON", csv_links["LEMON"])
 
+# %% 
+plot_demography("CHBP", csv_links["CHBP"])
+
+# %%
+plot_demography("CamCAN", csv_links["CamCAN"])
 
 # %%
 # plot_time_plot("LEMON", "010010", "eeg")
@@ -183,6 +274,11 @@ dataset = "LEMON"
 participant = EXAMPLE_PARTICIPANTS[dataset]
 plot_time_plot(dataset, participant, "eeg")
 
+# %%
+
+dataset = "CHBP"
+participant = EXAMPLE_PARTICIPANTS[dataset]
+plot_time_plot(dataset, participant, "eeg")
 
 # %%
 plot_freq_plot("LEMON", "010010", "eeg")
@@ -191,7 +287,8 @@ plot_freq_plot("LEMON", "010010", "eeg")
 #%%
 plot_histogram_durations("LEMON", "eeg") # CHBP
 
-
+# %%
+plot_histogram_durations_tuab("patient_TUAB_id_age.csv", tuab_only_first_trial=True, duration_shorter_than_x_sec=60)
 
 # %%
 
