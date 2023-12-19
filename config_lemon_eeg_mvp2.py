@@ -5,25 +5,44 @@ study_name = "age-prediction-benchmark"
 
 # On drago
 # N_JOBS = 40
-n_jobs = 1 #40       # ad: new version
+# n_jobs = 1 #40       # ad: new version
 
 # bids_root = Path("/storage/store3/data/LEMON_EEG_BIDS")
 # /u/home/dena/Documents/clean_brain_age/brain-age-benchmark/raw_LEMON/data/participants.tsv
-bids_root = Path("/vol/aimspace/users/dena/Documents/clean_brain_age/brain-age-benchmark/bids_LEMON/data") # ad
+bids_root = Path("/vol/aimspace/users/dena/Documents/clean_brain_age/brain-age-benchmark/bids_LEMON_one_participant") # ad
 # deriv_root = Path("/storage/store3/derivatives/LEMON_EEG_BIDS/")
-deriv_root = Path("/vol/aimspace/users/dena/Documents/clean_brain_age/brain-age-benchmark/processed_LEMON/data") # ad
+# deriv_root = Path("/vol/aimspace/users/dena/Documents/clean_brain_age/brain-age-benchmark/processed_LEMON/data") # ad
+deriv_root = Path("/vol/aimspace/users/dena/Documents/clean_brain_age/brain-age-benchmark/processed_LEMON/mvp4")
+
+task = "RSEEG"
+
 #maybe change that?  None
-subjects_dir = None #Path("/vol/aimspace/users/dena/Documents/clean_brain_age/brain-age-benchmark/processed_LEMON/freesurfer") # ad
+subjects = ["010010"]
+# subjects_dir = None #Path("/vol/aimspace/users/dena/Documents/clean_brain_age/brain-age-benchmark/processed_LEMON/freesurfer") # ad
               # '/storage/store/data/camcan-mne/freesurfer')
 
-source_info_path_update = {'processing': 'autoreject',
-                           'suffix': 'epo'}
+
+# source_info_path_update = {'processing': 'autoreject',
+#                            'suffix': 'epo'}
 
 
 # process_empty_room is always skipped, since EEG not EMG data 
 
 # task_is_rest = True ad
 
+
+interactive = False
+ch_types = ["eeg"]
+reject = {"eeg": 150e-6}
+
+conditions = ["eyes/open", "eyes/closed"]
+contrasts = [("eyes/open", "eyes/closed")]
+decode = True
+
+interpolate_bads_grand_average = False
+
+
+''' ausgeklammert von Adrian für Tests. 
 
 inverse_targets = []
 
@@ -32,7 +51,7 @@ noise_cov = 'ad-hoc'
 task = "RSEEG"
 
 sessions = []  # keep empty for code flow
-data_type = "eeg"
+# data_type = "eeg" # ad
 ch_types = ["eeg"]
 
 analyze_channels = [
@@ -86,3 +105,6 @@ log_level = "info"
 
 mne_log_level = "error"
 on_error = "continue"
+'''
+
+
