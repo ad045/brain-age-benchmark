@@ -139,6 +139,7 @@ processed_CHBP/
 processed_LEMON/
 processed_CamCAN/
 working_raw_data_CamCAN/
+eeg_matchingpennies/
 
 #ignore everything
 *.csv
@@ -152,3 +153,4 @@ working_raw_data_CamCAN/
 *.pkl
 *.fif
 *.svg
+
