@@ -18,6 +18,11 @@ from pathlib import Path
 from mne_bids import read_raw_bids, BIDSPath
 import matplotlib.pyplot as plt
 
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+
 # %%
 BIDS_ROOTS = {
     "LEMON": "/vol/aimspace/users/dena/Documents/clean_brain_age/brain-age-benchmark/bids_LEMON/data", 
@@ -117,6 +122,38 @@ def plot_histogram_durations(dataset, datatype="eeg"):
     plt.show()
 
 
+# %% 
+def plot_demography(dataset, csv_location):
+    dataset = "LEMON"
+
+    df = pd.read_csv(csv_location)
+    # Get mid ages
+    df[['Age_min', 'Age_max']] = df['Age'].str.split('-', expand=True).astype(int)
+    df['Age_mid'] = df[['Age_min', 'Age_max']].mean(axis=1)
+
+    # Set up the plot
+    plt.figure(figsize=(6, 6))
+    # plt.xlim(0,100)
+    binwidth=5
+
+    # Create a curvy histogram for females and males 
+    sns.histplot(data=df[df['Gender_ 1=female_2=male'] == 2], x='Age_mid', kde=True, label='Male', color='blue', binwidth=binwidth)
+    sns.histplot(data=df[df['Gender_ 1=female_2=male'] == 1], x='Age_mid', kde=True, label='Female', color='red', binwidth=binwidth)
+
+    # Set plot labels and title
+    plt.xlabel('Age')
+    plt.ylabel('Frequency')
+    plt.title(f'Histogram of Age by Gender, {dataset}')
+    plt.legend()
+
+    # Save and show the plot
+    plt.savefig(f"saved_pictures/gender_age_{dataset}.svg", format='svg')
+    plt.show()
+
+# %%
+plot_demography("LEMON", "Participants_LEMON.csv")
+
+
 # %%
 # plot_time_plot("LEMON", "010010", "eeg")
 dataset = "LEMON"
@@ -130,3 +167,11 @@ plot_freq_plot("LEMON", "010010", "eeg")
 
 #%%
 plot_histogram_durations("LEMON", "eeg") # CHBP
+
+
+
+# %%
+
+bids_path, raw = get_raw_data("LEMON", "010010", "eeg")
+
+
