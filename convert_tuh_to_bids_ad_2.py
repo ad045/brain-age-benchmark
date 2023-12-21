@@ -1,5 +1,3 @@
-#%%
-
 """Convert TUH Abnormal Dataset to the BIDS format.
 
 See "The Temple University Hospital EEG Corpus: Electrode Location and Channel
@@ -24,8 +22,6 @@ from braindecode.datasets import TUHAbnormal
 from mne_bids import write_raw_bids, print_dir_tree, make_report, BIDSPath
 
 
-# %%
-
 SEX_TO_MNE = {'n/a': 0, 'm': 1, 'f': 2}
 
 
@@ -41,8 +37,8 @@ def rename_tuh_channels(ch_name):
         'ROC',
         'EKG1',
     ]
-    match = re.findall(r'^EEG\s([A-Z]\w+)-REF$', ch_name) #ad?
-    # match = re.findall(r'^([A-Z]\w+)-REF$', ch_name)
+    match = re.findall(r'^EEG\s([A-Z]\w+)-REF$', ch_name) #commented in by ad
+    # match = re.findall(r'^([A-Z]\w+)-REF$', ch_name) # commented out by ad
     if len(match) == 1:
         out = match[0]
         out = out.replace('FP', 'Fp').replace('Z', 'z')  # Apply rules
@@ -97,21 +93,34 @@ def _convert_tuh_recording_to_bids(ds, bids_save_dir, desc=None):
     # XXX The following will break if it's not TUAB
     # XXX Also, should be written to the `..._scans.tsv` file instead of being
     #     annotations
+
+    ### uncommented
     onset = raw.times[0]
     duration = raw.times[-1] - raw.times[0]
     raw.annotations.append(
         onset, duration, 'abnormal' if desc['pathological'] else 'normal')
     raw.annotations.append(
         onset, duration, 'train' if desc['train'] else 'eval')
+    ### uncommented
+     
+    print(f"description is: {desc}")
 
     # Make up birthday based on recording date and age to allow mne-bids to
     # compute age
-    birthday = datetime.datetime(desc['year'] - desc['age'], desc['month'], 1)
+    # birthday = datetime.datetime(desc['year'] - desc['age'], desc['month'], 1)
+    measurement_date = raw.info['meas_date']           # ad
+    month = measurement_date.month           # ad
+    # day = measurement_date.day           # ad
+    year = measurement_date.year           # ad
+    birthday = datetime.datetime(year - desc['age'], month, 1)           # ad #ad: 2018 is year of recording TUAB
+
+
     birthday -= datetime.timedelta(weeks=4)
     sex = desc['gender'].lower()  # This assumes gender=sex
 
     # Add additional data required by BIDS
     mrn = str(desc['subject']).zfill(8)  # MRN: Medical Record Number
+
     session_nb = str(desc['session']).zfill(3)
     subject_info = {
         'participant_id': mrn,
@@ -132,7 +141,7 @@ def _convert_tuh_recording_to_bids(ds, bids_save_dir, desc=None):
 
 
 def convert_tuab_to_bids(tuh_data_dir, bids_save_dir, healthy_only=True,
-                         reset_session_indices=True, concat_split_files=False, # concat split files cd rawas originally true 
+                         reset_session_indices=True, concat_split_files=True,
                          n_jobs=1):
     """Convert TUAB dataset to BIDS format.
 
@@ -154,11 +163,10 @@ def convert_tuab_to_bids(tuh_data_dir, bids_save_dir, healthy_only=True,
     n_jobs : None | int
         Number of jobs for parallelization.
     """
-    concat_ds = TUHAbnormal(tuh_data_dir, recording_ids=None, n_jobs=n_jobs, target_name = "age") #included target_name in the hope to overwrite the pathological stuff
+    concat_ds = TUHAbnormal(tuh_data_dir, recording_ids=None, n_jobs=n_jobs)
 
     if healthy_only:
         concat_ds = concat_ds.split(by='pathological')['False']
-        
     description = concat_ds.description  # Make a copy because `description` is
     # made on-the-fly
     if concat_split_files:
@@ -179,28 +187,24 @@ def convert_tuab_to_bids(tuh_data_dir, bids_save_dir, healthy_only=True,
         _convert_tuh_recording_to_bids(
             ds, bids_save_dir, desc=desc)
 
-#%%
 
 if __name__ == '__main__':
 
     parser = argparse.ArgumentParser(description='Convert TUH to BIDS.')
     parser.add_argument(
         '--tuab_data_dir', type=str,
-        default= "/vol/aimspace/users/dena/Documents/clean_brain_age/TUAB_2/edf",
-        #/vol/aimspace/users/home/dena/Documents/clean_brain_age/raw_data/TUAB/eval/normal/01_tcp_ar", 
-        #../raw_data/storage/TUAB", #eval/storage/store5",
-        # default='/storage/store/data/tuh_eeg/www.isip.piconepress.com/projects/tuh_eeg/downloads/tuh_eeg_abnormal/v2.0.0/edf',
+        default="/vol/aimspace/users/dena/Documents/clean_brain_age/TUAB_2/edf",
+        #'/storage/store/data/tuh_eeg/www.isip.piconepress.com/projects/tuh_eeg/downloads/tuh_eeg_abnormal/v2.0.0/edf',
         help='Path to the original data.')
     parser.add_argument(
         '--bids_data_dir', type=str,
-        default = "/vol/aimspace/users/dena/Documents/clean_brain_age/brain-age-benchmark/processed_TUAB", 
-        # "processed_TUAB",
+        default = "/vol/aimspace/users/dena/Documents/clean_brain_age/brain-age-benchmark/processed_TUAB",  #ad
         help='Path to where the converted data should be saved.')
     parser.add_argument(
-        '--healthy_only', type=bool, default=True,                     # True, according to paper
+        '--healthy_only', type=bool, default=True, # ad
         help='Only convert recordings of healthy subjects (default: False)')
     parser.add_argument(
-        '--reset_session_indices', type=bool, default=True,            # ad: A simplification done by the authors of the paper
+        '--reset_session_indices', type=bool, default=True,
         help='Reset session indices (default: True)')
     parser.add_argument(
         '--n_jobs', type=int, default=1,
@@ -213,5 +217,3 @@ if __name__ == '__main__':
 
     print_dir_tree(args.bids_data_dir)
     print(make_report(args.bids_data_dir))
-
-# %%
